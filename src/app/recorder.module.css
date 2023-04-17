@@ -1,0 +1,38 @@
+.recorder {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+}
+
+.recorder > * {
+  margin-bottom: 0.5rem;
+}
+
+.recorder > *:last-child {
+  margin-bottom: 0;
+}
+
+.log-out {
+  margin-bottom: 1rem;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+}
+
+.form > * {
+  margin-bottom: 0.25rem;
+}
+
+.form > *:last-child {
+  margin-bottom: 0;
+}
+
+.success {
+  margin-top: 0.5rem;
+}
+
+.error {
+  color: rgb(196, 62, 62);
+}
