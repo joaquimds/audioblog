@@ -1,9 +1,9 @@
 "use client";
 
-import { Audio } from "@/types";
 import { Session } from "next-auth";
 import { signIn, signOut } from "next-auth/react";
 import { FormEvent, useEffect, useState } from "react";
+import { Audio } from "../../types/audioblog";
 
 import styles from "./recorder.module.css";
 
@@ -17,16 +17,6 @@ const mediaRecorderState: MediaRecorderState = {
   stream: null,
   mediaRecorder: null,
   audioBlobs: null,
-};
-
-const getHash = async (input: string) => {
-  const textAsBuffer = new TextEncoder().encode(input);
-  const hashBuffer = await window.crypto.subtle.digest("SHA-256", textAsBuffer);
-  const hashArray = Array.from(new Uint8Array(hashBuffer));
-  const hash = hashArray
-    .map((item) => item.toString(16).padStart(2, "0"))
-    .join("");
-  return hash;
 };
 
 const Recorder = ({
@@ -135,16 +125,15 @@ const Recorder = ({
       setError("No recording to submit.");
       return;
     }
-    if (!session?.user?.email) {
+    if (!session?.emailHash) {
       setError("Your are not logged in, try refreshing the page.");
       return;
     }
-    const emailHash = await getHash(session.user.email);
     const audiosByThisAuthor = audios.filter(
       (audio) => audio.author === author
     );
     const authorByThisAuthorButDifferentEmail = audiosByThisAuthor.filter(
-      (audio) => audio.emailHash !== emailHash
+      (audio) => audio.emailHash !== session.emailHash
     );
     if (authorByThisAuthorButDifferentEmail.length > 0) {
       setError("Someone has already claimed this author name.");
@@ -229,7 +218,7 @@ const Recorder = ({
           {success ? (
             <strong className={styles.success}>{success}</strong>
           ) : null}
-          {error ? <strong className={styles.error}>{error}</strong> : null}
+          {error ? <strong className="error">{error}</strong> : null}
         </>
       )}
     </div>

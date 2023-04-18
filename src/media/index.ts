@@ -1,20 +1,7 @@
-import { Audio } from "@/types";
-import * as crypto from "crypto";
+import { ForbiddenError, NotFoundError } from "@/errors";
 import * as path from "path";
-import { readDir, readFile, writeFile } from "./util";
-
-const getHash = async (input: string) => {
-  const textAsBuffer = new TextEncoder().encode(input);
-  const hashBuffer = await crypto.webcrypto.subtle.digest(
-    "SHA-256",
-    textAsBuffer
-  );
-  const hashArray = Array.from(new Uint8Array(hashBuffer));
-  const hash = hashArray
-    .map((item) => item.toString(16).padStart(2, "0"))
-    .join("");
-  return hash;
-};
+import { Audio } from "../../types/audioblog";
+import { readDir, readFile, removeFile, writeFile } from "./util";
 
 const getMediaDirectory = () => {
   const folders = __dirname.split(path.sep);
@@ -29,9 +16,10 @@ const getMediaDirectory = () => {
   return path.join(rootPath, "public", "media");
 };
 
+const MEDIA_DIRECTORY = getMediaDirectory()
+
 export const list = async (): Promise<Audio[]> => {
-  const mediaDirectory = getMediaDirectory();
-  const files = await readDir(mediaDirectory);
+  const files = await readDir(MEDIA_DIRECTORY);
   files.sort();
   const audioFiles = files.filter(
     (file) => !file.startsWith(".") && !file.endsWith("json")
@@ -42,7 +30,7 @@ export const list = async (): Promise<Audio[]> => {
     filenameParts.pop();
     const metadataFilename = filenameParts.join(".") + ".json";
     const metadataString = await readFile(
-      path.join(mediaDirectory, metadataFilename)
+      path.join(MEDIA_DIRECTORY, metadataFilename)
     );
     const { author, title, emailHash, date } = JSON.parse(metadataString);
     audios.push({
@@ -59,19 +47,50 @@ export const list = async (): Promise<Audio[]> => {
 export const add = async (
   author: string,
   title: string,
-  email: string,
+  emailHash: string,
   audio: Blob
 ) => {
-  const mediaDirectory = getMediaDirectory();
-  const emailHash = await getHash(email);
   const metadata = { author, title, emailHash, date: new Date().toISOString() };
-  const filename = encodeURIComponent(metadata.date);
-  const audioFilename = `${filename}.webm`;
-  const metadataFilename = `${filename}.json`;
+  const basename = encodeURIComponent(metadata.date);
+  const audioFilename = `${basename}.webm`;
+  const metadataFilename = `${basename}.json`;
   const content = Buffer.from(await audio.arrayBuffer());
-  await writeFile(path.join(mediaDirectory, audioFilename), content);
+  await writeFile(path.join(MEDIA_DIRECTORY, audioFilename), content);
   await writeFile(
-    path.join(mediaDirectory, metadataFilename),
+    path.join(MEDIA_DIRECTORY, metadataFilename),
     JSON.stringify(metadata)
   );
+};
+
+export const remove = async (urlEncodedBasename: string, emailHash: string) => {
+  const audios = await list();
+  const matchingAudios = audios.filter((audio) => {
+    const urlParts = audio.url.split("/");
+    const filename = urlParts.pop();
+    if (!filename) {
+      return false;
+    }
+    const filenameParts = filename.split(".");
+    filenameParts.pop();
+    const basenameToCheck = filenameParts.join(".");
+    return basenameToCheck === urlEncodedBasename;
+  });
+  if (matchingAudios.length !== 1) {
+    throw new NotFoundError();
+  }
+  const toDelete = matchingAudios[0]
+  if (toDelete.emailHash !== emailHash) {
+    throw new ForbiddenError();
+  }
+  const urlParts = toDelete.url.split("/");
+  const mediaFilename = urlParts.pop();
+  if (!mediaFilename) {
+    throw new NotFoundError();
+  }
+  const filenameParts = mediaFilename.split(".")
+  filenameParts.pop()
+  filenameParts.push("json")
+  const metadataFilename = filenameParts.join(".")
+  await removeFile(path.join(MEDIA_DIRECTORY, mediaFilename))
+  await removeFile(path.join(MEDIA_DIRECTORY, metadataFilename))
 };

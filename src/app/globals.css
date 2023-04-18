@@ -63,3 +63,7 @@ input {
 label {
   font-size: 0.8rem;
 }
+
+.error {
+  color: rgb(196, 62, 62);
+}

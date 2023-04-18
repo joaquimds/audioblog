@@ -1,9 +1,8 @@
-import { getServerSession } from "next-auth/next";
-
-import styles from "./page.module.css";
-
 import { list } from "@/media";
+import { getServerSession } from "next-auth/next";
 import { authOptions } from "./api/auth/[...nextauth]/route";
+import Audio from "./audio";
+import styles from "./page.module.css";
 import Recorder from "./recorder";
 
 const Home = async () => {
@@ -16,21 +15,18 @@ const Home = async () => {
       <div className={styles.recorder}>
         <Recorder audios={audios} session={session} />
       </div>
-      <h2 className={styles.title}>All blogs</h2>
-      <ul>
-        {audios.map(({ date, title, url }) => (
-          <li key={title} className={styles.audio}>
-            <div className={styles.audio__header}>
-              <h3>{title}</h3>
-              <small>
-                {new Date(date).toLocaleDateString()}&nbsp;
-                {new Date(date).toLocaleTimeString()}
-              </small>
-            </div>
-            <audio controls src={url} />
-          </li>
-        ))}
-      </ul>
+      {audios.length ? (
+        <>
+          <h2 className={styles.title}>All blogs</h2>
+          <ul>
+            {audios.map((audio) => (
+              <li key={audio.url} className={styles.audio}>
+                <Audio audio={audio} session={session} />
+              </li>
+            ))}
+          </ul>
+        </>
+      ) : null}
     </main>
   );
 };

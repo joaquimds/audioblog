@@ -5,7 +5,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 export const POST = async (request: NextRequest) => {
   const session = await getServerSession(authOptions);
-  if (!session || !session.user?.email) {
+  if (!session || !session.emailHash) {
     return new NextResponse("Forbidden", { status: 403 });
   }
   const body = await request.formData();
@@ -15,6 +15,6 @@ export const POST = async (request: NextRequest) => {
   if (!title || !content) {
     return new NextResponse("Invalid request", { status: 400 });
   }
-  await add(author, title, session.user.email, content);
+  await add(author, title, session.emailHash, content);
   return new NextResponse("OK");
 };

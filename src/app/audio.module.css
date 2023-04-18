@@ -1,0 +1,41 @@
+.audio {
+  display: flex;
+  flex-direction: column;
+}
+
+.audio > * {
+  margin-bottom: 0.5rem;
+}
+
+.audio > *:last-child {
+  margin-bottom: 0;
+}
+
+.header {
+  align-items: baseline;
+  display: flex;
+  margin-bottom: 0.5rem;
+}
+
+.title {
+  margin-right: 0.5rem;
+}
+
+.author {
+  font-size: smaller;
+  margin-right: auto
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+}
+
+.controls audio {
+  flex-grow: 1;
+  margin-right: 0.5rem;
+}
+
+.error {
+  text-align: center;
+}

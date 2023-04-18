@@ -20,6 +20,14 @@
 .audio__header {
   align-items: baseline;
   display: flex;
-  justify-content: space-between;
   margin-bottom: 0.5rem;
+}
+
+.audio__title {
+  margin-right: 0.5rem;
+}
+
+.audio__author {
+  font-size: smaller;
+  margin-right: auto
 }

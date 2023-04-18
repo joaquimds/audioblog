@@ -20,6 +20,16 @@ export const readFile = (path: string): Promise<string> =>
     });
   });
 
+export const removeFile = (path: string): Promise<void> =>
+  new Promise((resolve, reject) => {
+    fs.unlink(path, (err) => {
+      if (err) {
+        return reject(err);
+      }
+      resolve();
+    });
+  });
+
 export const writeFile = (
   path: string,
   content: Buffer | string
