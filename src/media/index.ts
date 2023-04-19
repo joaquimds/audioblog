@@ -50,8 +50,9 @@ export const add = async (
   emailHash: string,
   audio: Blob
 ) => {
-  const metadata = { author, title, emailHash, date: new Date().toISOString() };
-  const basename = encodeURIComponent(metadata.date);
+  const now = new Date()
+  const metadata = { author, title, emailHash, date: now.toISOString() };
+  const basename = now.getTime()
   const audioFilename = `${basename}.webm`;
   const metadataFilename = `${basename}.json`;
   const content = Buffer.from(await audio.arrayBuffer());
@@ -62,7 +63,7 @@ export const add = async (
   );
 };
 
-export const remove = async (urlEncodedBasename: string, emailHash: string) => {
+export const remove = async (basename: string, emailHash: string) => {
   const audios = await list();
   const matchingAudios = audios.filter((audio) => {
     const urlParts = audio.url.split("/");
@@ -73,7 +74,7 @@ export const remove = async (urlEncodedBasename: string, emailHash: string) => {
     const filenameParts = filename.split(".");
     filenameParts.pop();
     const basenameToCheck = filenameParts.join(".");
-    return basenameToCheck === urlEncodedBasename;
+    return basenameToCheck === basename;
   });
   if (matchingAudios.length !== 1) {
     throw new NotFoundError();

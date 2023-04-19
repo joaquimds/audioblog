@@ -14,7 +14,7 @@ export const DELETE = async (
   }
   const { basename } = params;
   try {
-    await remove(encodeURIComponent(basename), session.emailHash);
+    await remove(basename, session.emailHash);
     return new NextResponse("OK", { status: 200 });
   } catch (e: unknown) {
     if (e instanceof ForbiddenError) {
