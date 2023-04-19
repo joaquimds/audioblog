@@ -19,21 +19,21 @@ const Audio = ({
       const urlParts = url.split("/");
       const filename = urlParts.pop();
       if (!filename) {
-        return
+        return;
       }
       const filenameParts = filename.split(".");
       filenameParts.pop();
       const basename = filenameParts.join(".");
-      setLoading(true)
-      setError("")
+      setLoading(true);
+      setError("");
       const response = await fetch(`/api/media/${basename}`, {
         method: "DELETE",
       });
       if (!response.ok) {
         setError(`Failed to delete recording, error ${response.status}.`);
       } else {
-        setError("Deleted recording, reloading...")
-        setTimeout(() => location.reload(), 3000)
+        setError("Deleted recording, reloading...");
+        setTimeout(() => location.reload(), 3000);
       }
     } catch (e: unknown) {
       if (e instanceof Error) {
@@ -42,7 +42,7 @@ const Audio = ({
         setError("Unknown error deleting recording.");
       }
     }
-    setLoading(false)
+    setLoading(false);
   };
 
   return (
@@ -68,7 +68,9 @@ const Audio = ({
           </button>
         ) : null}
       </div>
-      {error ? <strong className={`error ${styles.error}`}>{error}</strong> : null}
+      {error ? (
+        <strong className={`error ${styles.error}`}>{error}</strong>
+      ) : null}
     </div>
   );
 };

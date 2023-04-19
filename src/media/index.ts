@@ -16,7 +16,7 @@ const getMediaDirectory = () => {
   return path.join(rootPath, "public", "media");
 };
 
-const MEDIA_DIRECTORY = getMediaDirectory()
+const MEDIA_DIRECTORY = getMediaDirectory();
 
 export const list = async (): Promise<Audio[]> => {
   const files = await readDir(MEDIA_DIRECTORY);
@@ -78,7 +78,7 @@ export const remove = async (urlEncodedBasename: string, emailHash: string) => {
   if (matchingAudios.length !== 1) {
     throw new NotFoundError();
   }
-  const toDelete = matchingAudios[0]
+  const toDelete = matchingAudios[0];
   if (toDelete.emailHash !== emailHash) {
     throw new ForbiddenError();
   }
@@ -87,10 +87,10 @@ export const remove = async (urlEncodedBasename: string, emailHash: string) => {
   if (!mediaFilename) {
     throw new NotFoundError();
   }
-  const filenameParts = mediaFilename.split(".")
-  filenameParts.pop()
-  filenameParts.push("json")
-  const metadataFilename = filenameParts.join(".")
-  await removeFile(path.join(MEDIA_DIRECTORY, mediaFilename))
-  await removeFile(path.join(MEDIA_DIRECTORY, metadataFilename))
+  const filenameParts = mediaFilename.split(".");
+  filenameParts.pop();
+  filenameParts.push("json");
+  const metadataFilename = filenameParts.join(".");
+  await removeFile(path.join(MEDIA_DIRECTORY, mediaFilename));
+  await removeFile(path.join(MEDIA_DIRECTORY, metadataFilename));
 };

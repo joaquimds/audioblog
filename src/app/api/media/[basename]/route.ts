@@ -15,7 +15,7 @@ export const DELETE = async (
   const { basename } = params;
   try {
     await remove(encodeURIComponent(basename), session.emailHash);
-    return new NextResponse("OK", { status: 200 })
+    return new NextResponse("OK", { status: 200 });
   } catch (e: unknown) {
     if (e instanceof ForbiddenError) {
       return new NextResponse("Forbidden", { status: 403 });

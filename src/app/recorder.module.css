@@ -12,21 +12,21 @@
   margin-bottom: 0;
 }
 
+.volume {
+  border: 1px solid grey;
+  border-radius: 1rem;
+  display: flex;
+  height: 1rem;
+  overflow: hidden;
+  width: 100%;
+}
+
+.volume__marker {
+  background-color: rgb(78, 134, 67);
+}
+
 .log-out {
   margin-bottom: 1rem;
-}
-
-.form {
-  display: flex;
-  flex-direction: column;
-}
-
-.form > * {
-  margin-bottom: 0.25rem;
-}
-
-.form > *:last-child {
-  margin-bottom: 0;
 }
 
 .success {

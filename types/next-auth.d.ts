@@ -1,8 +1,8 @@
-import NextAuth from "next-auth"
+import "next-auth";
 
 declare module "next-auth" {
   interface Session {
-    emailHash?: string,
-    isAdmin?: boolean
+    emailHash?: string;
+    isAdmin?: boolean;
   }
 }

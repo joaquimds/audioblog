@@ -1,0 +1,12 @@
+.form {
+  display: flex;
+  flex-direction: column;
+}
+
+.form > * {
+  margin-bottom: 0.25rem;
+}
+
+.form > *:last-child {
+  margin-bottom: 0;
+}

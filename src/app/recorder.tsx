@@ -2,21 +2,23 @@
 
 import { Session } from "next-auth";
 import { signIn, signOut } from "next-auth/react";
-import { FormEvent, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Audio } from "../../types/audioblog";
-
+import RecorderForm from "./recorder-form";
 import styles from "./recorder.module.css";
 
 type MediaRecorderState = {
-  stream: MediaStream | null;
-  mediaRecorder: MediaRecorder | null;
   audioBlobs: BlobPart[] | null;
+  audioContext: AudioContext | null;
+  mediaRecorder: MediaRecorder | null;
+  stream: MediaStream | null;
 };
 
 const mediaRecorderState: MediaRecorderState = {
-  stream: null,
-  mediaRecorder: null,
   audioBlobs: null,
+  audioContext: null,
+  mediaRecorder: null,
+  stream: null,
 };
 
 const Recorder = ({
@@ -29,10 +31,10 @@ const Recorder = ({
   const [error, setError] = useState("");
   const [isRecording, setRecording] = useState(false);
   const [audio, setAudio] = useState<Blob | null>(null);
-  const [title, setTitle] = useState("");
-  const [author, setAuthor] = useState("");
+  const [initialTitle, setInitialTitle] = useState("");
   const [isLoading, setLoading] = useState(false);
   const [success, setSuccess] = useState("");
+  const [volume, setVolume] = useState(0);
 
   useEffect(() => {
     if (!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia)) {
@@ -46,7 +48,7 @@ const Recorder = ({
     if (isRecording) {
       await stopRecording();
     } else {
-      setTitle("");
+      setInitialTitle("");
       await startRecording();
     }
   };
@@ -71,10 +73,34 @@ const Recorder = ({
         }
       );
 
+      const audioContext = new AudioContext();
+      const mediaStreamAudioSourceNode = audioContext.createMediaStreamSource(
+        mediaRecorderState.stream
+      );
+      const analyser = audioContext.createAnalyser();
+      analyser.fftSize = 256;
+      const bufferLength = analyser.frequencyBinCount;
+      const amplitudeData = new Uint8Array(bufferLength);
+      mediaStreamAudioSourceNode.connect(analyser);
+
+      const onFrame = () => {
+        analyser.getByteFrequencyData(amplitudeData);
+        let sumSquares = 0.0;
+        amplitudeData.forEach((amplitude) => {
+          sumSquares += amplitude * amplitude;
+        });
+        setVolume(Math.sqrt(sumSquares / amplitudeData.length));
+        if (mediaRecorderState.mediaRecorder?.state === "recording") {
+          window.requestAnimationFrame(onFrame);
+        }
+      };
+      window.requestAnimationFrame(onFrame);
+
       mediaRecorderState.mediaRecorder.start();
 
       setRecording(true);
     } catch (e: unknown) {
+      console.error(e)
       if (e instanceof Error) {
         setError(e.message);
       } else {
@@ -117,8 +143,7 @@ const Recorder = ({
       mediaRecorderState.audioBlobs = [];
     });
 
-  const submitRecording = async (e: FormEvent) => {
-    e.preventDefault();
+  const submitRecording = async (author: string, title: string) => {
     setSuccess("");
     setError("");
     if (!audio) {
@@ -153,7 +178,7 @@ const Recorder = ({
         setError(`Failed to submit recording, error ${response.status}.`);
       } else {
         setSuccess(`Submitted recording with title ${title}! Reloading...`);
-        setTitle("");
+        setInitialTitle("");
         setAudio(null);
         setTimeout(() => location.reload(), 3000);
       }
@@ -167,7 +192,6 @@ const Recorder = ({
     setLoading(false);
   };
 
-  const submitDisabled = isLoading || !title || !author;
   return (
     <div className={styles.recorder}>
       {!session ? (
@@ -190,30 +214,21 @@ const Recorder = ({
           >
             {isRecording ? "Stop recording" : "Start recording"}
           </button>
-          {audio ? <audio controls src={URL.createObjectURL(audio)} /> : null}
+          {isRecording ? (
+            <div className={styles.volume}>
+              <div
+                className={styles.volume__marker}
+                style={{width: volume}}
+              ></div>
+            </div>
+          ) : null}
+          {audio && !isRecording ? <audio controls src={URL.createObjectURL(audio)} /> : null}
           {audio ? (
-            <form onSubmit={(e) => submitRecording(e)} className={styles.form}>
-              <label htmlFor="title">Title</label>
-              <input
-                id="title"
-                type="text"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-              />
-              <label htmlFor="author">Author</label>
-              <input
-                id="author"
-                type="text"
-                value={author}
-                onChange={(e) => setAuthor(e.target.value)}
-              />
-              <button
-                disabled={submitDisabled}
-                className={submitDisabled ? "" : "default"}
-              >
-                Submit
-              </button>
-            </form>
+            <RecorderForm
+              onSubmit={(author, title) => submitRecording(author, title)}
+              isLoading={isLoading}
+              initialTitle={initialTitle}
+            />
           ) : null}
           {success ? (
             <strong className={styles.success}>{success}</strong>
