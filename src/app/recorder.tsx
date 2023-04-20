@@ -100,7 +100,6 @@ const Recorder = ({
 
       setRecording(true);
     } catch (e: unknown) {
-      console.error(e)
       if (e instanceof Error) {
         setError(e.message);
       } else {
@@ -218,11 +217,13 @@ const Recorder = ({
             <div className={styles.volume}>
               <div
                 className={styles.volume__marker}
-                style={{width: volume}}
+                style={{ width: volume }}
               ></div>
             </div>
           ) : null}
-          {audio && !isRecording ? <audio controls src={URL.createObjectURL(audio)} /> : null}
+          {audio && !isRecording ? (
+            <audio controls src={URL.createObjectURL(audio)} />
+          ) : null}
           {audio ? (
             <RecorderForm
               onSubmit={(author, title) => submitRecording(author, title)}

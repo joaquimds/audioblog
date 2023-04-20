@@ -50,9 +50,9 @@ export const add = async (
   emailHash: string,
   audio: Blob
 ) => {
-  const now = new Date()
+  const now = new Date();
   const metadata = { author, title, emailHash, date: now.toISOString() };
-  const basename = now.getTime()
+  const basename = now.getTime();
   const audioFilename = `${basename}.webm`;
   const metadataFilename = `${basename}.json`;
   const content = Buffer.from(await audio.arrayBuffer());

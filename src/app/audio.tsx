@@ -1,7 +1,7 @@
 "use client";
 
 import { Session } from "next-auth";
-import { useEffect, useState } from "react";
+import { SyntheticEvent, useEffect, useState } from "react";
 import { Audio } from "../../types/audioblog";
 import styles from "./audio.module.css";
 
@@ -13,13 +13,15 @@ const Audio = ({
   session: Session | null;
 }) => {
   const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [formattedDate, setFormattedDate] = useState("")
+  const [isLoading, setLoading] = useState(false);
+  const [isRenderedOnClient, setRenderedOnClient] = useState(false);
 
+  // Hack to make sure onLoadedMetadata fires, which fixes the audio duration
   useEffect(() => {
-    const d = new Date(date)
-    setFormattedDate(`${d.toLocaleDateString()} ${d.toLocaleTimeString()}`)
-  }, [date])
+    if (typeof window !== "undefined") {
+      setRenderedOnClient(true);
+    }
+  }, []);
 
   const deleteAudio = async (url: string) => {
     try {
@@ -52,6 +54,27 @@ const Audio = ({
     setLoading(false);
   };
 
+  // Hack to display the correct duration of the audio
+  const onLoadedMetadata = (e: SyntheticEvent<HTMLAudioElement>) => {
+    const audio = e.target as HTMLAudioElement;
+    if (audio.duration === Infinity) {
+      const backToStart = () => {
+        audio.currentTime = 0;
+        audio.removeEventListener("timeupdate", backToStart);
+      };
+      audio.addEventListener("timeupdate", backToStart);
+      audio.currentTime = 1e101;
+    }
+  };
+
+  // Formatted date on server is inconsistent and cba to fix it
+  // Plus having a loading indicator while the audio isn't ready isn't so bad
+  const formattedDate = !isRenderedOnClient ? "Loading..." : `
+    ${new Date(date).toLocaleDateString()}
+    ${new Date(date).toLocaleTimeString()}
+  `
+    .trim()
+
   return (
     <div className={styles.audio}>
       <div className={styles.header}>
@@ -60,15 +83,15 @@ const Audio = ({
         <small className={styles.date}>{formattedDate}</small>
       </div>
       <div className={styles.controls}>
-        <audio controls>
-          <source src={url} />
+        <audio controls onLoadedMetadata={onLoadedMetadata}>
+          {isRenderedOnClient ? <source src={url} /> : null}
         </audio>
         {session?.isAdmin || session?.emailHash === emailHash ? (
           <button
             type="button"
             onClick={() => deleteAudio(url)}
             className="danger"
-            disabled={loading}
+            disabled={isLoading}
           >
             Delete
           </button>
