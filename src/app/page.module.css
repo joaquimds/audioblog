@@ -2,6 +2,8 @@
   align-items: center;
   display: flex;
   flex-direction: column;
+  margin: 0 auto;
+  max-width: 600px;
   padding: 1rem;
 }
 
@@ -13,21 +15,10 @@
   margin-bottom: 1rem;
 }
 
+.audios {
+  width: 100%;
+}
+
 .audio {
   margin-bottom: 1rem;
-}
-
-.audio__header {
-  align-items: baseline;
-  display: flex;
-  margin-bottom: 0.5rem;
-}
-
-.audio__title {
-  margin-right: 0.5rem;
-}
-
-.audio__author {
-  font-size: smaller;
-  margin-right: auto;
 }

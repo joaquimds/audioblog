@@ -18,7 +18,7 @@ const Home = async () => {
       {audios.length ? (
         <>
           <h2 className={styles.title}>All blogs</h2>
-          <ul>
+          <ul className={styles.audios}>
             {audios.map((audio) => (
               <li key={audio.url} className={styles.audio}>
                 <Audio audio={audio} session={session} />

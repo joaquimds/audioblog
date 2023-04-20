@@ -1,7 +1,7 @@
 "use client";
 
 import { Session } from "next-auth";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Audio } from "../../types/audioblog";
 import styles from "./audio.module.css";
 
@@ -14,6 +14,13 @@ const Audio = ({
 }) => {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [formattedDate, setFormattedDate] = useState("")
+
+  useEffect(() => {
+    const d = new Date(date)
+    setFormattedDate(`${d.toLocaleDateString()} ${d.toLocaleTimeString()}`)
+  }, [date])
+
   const deleteAudio = async (url: string) => {
     try {
       const urlParts = url.split("/");
@@ -50,13 +57,12 @@ const Audio = ({
       <div className={styles.header}>
         <h3 className={styles.title}>{title}</h3>
         <em className={styles.author}>{author}</em>
-        <small className={styles.date}>
-          {new Date(date).toLocaleDateString()}&nbsp;
-          {new Date(date).toLocaleTimeString()}
-        </small>
+        <small className={styles.date}>{formattedDate}</small>
       </div>
       <div className={styles.controls}>
-        <audio controls src={url} />
+        <audio controls>
+          <source src={url} />
+        </audio>
         {session?.isAdmin || session?.emailHash === emailHash ? (
           <button
             type="button"
