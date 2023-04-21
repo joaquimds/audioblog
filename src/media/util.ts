@@ -1,3 +1,4 @@
+import * as child_process from "child_process";
 import * as fs from "fs";
 
 export const readDir = (path: string): Promise<string[]> =>
@@ -36,6 +37,16 @@ export const writeFile = (
 ): Promise<void> =>
   new Promise((resolve, reject) => {
     fs.writeFile(path, content, (err) => {
+      if (err) {
+        return reject(err);
+      }
+      resolve();
+    });
+  });
+
+export const exec = (command: string) =>
+  new Promise<void>((resolve, reject) => {
+    child_process.exec(command, (err) => {
       if (err) {
         return reject(err);
       }

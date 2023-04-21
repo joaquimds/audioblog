@@ -6,7 +6,7 @@ import { Audio } from "../../types/audioblog";
 import styles from "./audio.module.css";
 
 const Audio = ({
-  audio: { title, author, date, emailHash, url },
+  audio: { basename, title, author, date, emailHash, urls },
   session,
 }: {
   audio: Audio;
@@ -23,16 +23,8 @@ const Audio = ({
     }
   }, []);
 
-  const deleteAudio = async (url: string) => {
+  const deleteAudio = async () => {
     try {
-      const urlParts = url.split("/");
-      const filename = urlParts.pop();
-      if (!filename) {
-        return;
-      }
-      const filenameParts = filename.split(".");
-      filenameParts.pop();
-      const basename = filenameParts.join(".");
       setLoading(true);
       setError("");
       const response = await fetch(`/api/media/${basename}`, {
@@ -69,11 +61,12 @@ const Audio = ({
 
   // Formatted date on server is inconsistent and cba to fix it
   // Plus having a loading indicator while the audio isn't ready isn't so bad
-  const formattedDate = !isRenderedOnClient ? "Loading..." : `
+  const formattedDate = !isRenderedOnClient
+    ? "Loading..."
+    : `
     ${new Date(date).toLocaleDateString()}
     ${new Date(date).toLocaleTimeString()}
-  `
-    .trim()
+  `.trim();
 
   return (
     <div className={styles.audio}>
@@ -84,12 +77,13 @@ const Audio = ({
       </div>
       <div className={styles.controls}>
         <audio controls onLoadedMetadata={onLoadedMetadata}>
-          {isRenderedOnClient ? <source src={url} /> : null}
+          {isRenderedOnClient ? <source src={urls.webm} /> : null}
+          {isRenderedOnClient ? <source src={urls.mp3} /> : null}
         </audio>
         {session?.isAdmin || session?.emailHash === emailHash ? (
           <button
             type="button"
-            onClick={() => deleteAudio(url)}
+            onClick={() => deleteAudio()}
             className="danger"
             disabled={isLoading}
           >

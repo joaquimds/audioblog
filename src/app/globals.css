@@ -67,3 +67,25 @@ label {
 .error {
   color: rgb(196, 62, 62);
 }
+
+.main {
+  margin: 0 auto;
+  max-width: 600px;
+  padding: 1rem;
+}
+
+.copy h1 {
+  margin-bottom: 1rem;
+}
+
+.copy h2 {
+  margin: 0.5rem 0;
+}
+
+.copy p {
+  margin-bottom: 0.25rem;
+}
+
+.copy ol {
+  padding-left: 40px;
+}

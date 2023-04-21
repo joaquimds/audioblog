@@ -10,7 +10,7 @@ const Home = async () => {
   const audios = await list();
   audios.reverse();
   return (
-    <main className={styles.main}>
+    <main className={`${styles.main} main`}>
       <h1 className={styles.title}>Audioblog</h1>
       <div className={styles.recorder}>
         <Recorder audios={audios} session={session} />
@@ -20,7 +20,7 @@ const Home = async () => {
           <h2 className={styles.title}>All blogs</h2>
           <ul className={styles.audios}>
             {audios.map((audio) => (
-              <li key={audio.url} className={styles.audio}>
+              <li key={audio.basename} className={styles.audio}>
                 <Audio audio={audio} session={session} />
               </li>
             ))}
