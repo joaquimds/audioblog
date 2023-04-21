@@ -9,12 +9,13 @@ export const POST = async (request: NextRequest) => {
     return new NextResponse("Forbidden", { status: 403 });
   }
   const body = await request.formData();
-  const author = body.get("author") as string;
-  const title = body.get("title") as string;
   const content = body.get("content") as Blob;
-  if (!title || !content) {
+  const author = body.get("author") as string;
+  const parent = body.get("parent") as string | null;
+  const title = body.get("title") as string;
+  if (!title || !content || !author) {
     return new NextResponse("Invalid request", { status: 400 });
   }
-  await add(author, title, session.emailHash, content);
+  await add(content, author, session.emailHash, parent, title);
   return new NextResponse("OK");
 };

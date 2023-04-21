@@ -12,21 +12,29 @@
   margin-bottom: 0;
 }
 
+.controls {
+  display: flex;
+}
+
+.controls > * {
+  margin-right: 0.5rem;
+}
+
+.controls > *:last-child {
+  margin-right: 0;
+}
+
 .volume {
   border: 1px solid grey;
   border-radius: 1rem;
   display: flex;
   height: 1rem;
   overflow: hidden;
-  width: 100%;
+  width: 200px;
 }
 
 .volume__marker {
   background-color: rgb(78, 134, 67);
-}
-
-.log-out {
-  margin-bottom: 1rem;
 }
 
 .success {

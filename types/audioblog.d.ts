@@ -1,11 +1,14 @@
 export type Audio = {
-  basename: string;
   author: string;
-  emailHash: string;
+  basename: string;
   date: string;
+  emailHash: string;
+  parent: string | null;
   title: string;
   urls: {
     mp3: string;
     webm: string;
   };
 };
+
+export type AudioTreeItem = Audio & { children: AudioTreeItem[] };

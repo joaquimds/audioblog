@@ -5,16 +5,22 @@
   max-width: 400px;
 }
 
-.title {
+.main > * {
   margin-bottom: 1rem;
 }
 
-.recorder {
-  margin-bottom: 1rem;
+.main > *:last-child {
+  margin-bottom: 0;
 }
 
 .audios {
   width: 100%;
+}
+
+.audio__header {
+  align-items: baseline;
+  display: flex;
+  margin-bottom: 0.5rem;
 }
 
 .audio {

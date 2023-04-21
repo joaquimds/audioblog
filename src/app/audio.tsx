@@ -2,18 +2,22 @@
 
 import { Session } from "next-auth";
 import { SyntheticEvent, useEffect, useState } from "react";
-import { Audio } from "../../types/audioblog";
+import { AudioTreeItem } from "../../types/audioblog";
 import styles from "./audio.module.css";
+import Recorder from "./recorder";
 
 const Audio = ({
-  audio: { basename, title, author, date, emailHash, urls },
+  audio: { basename, children, title, author, date, emailHash, urls },
+  authorMap,
   session,
 }: {
-  audio: Audio;
+  audio: AudioTreeItem;
+  authorMap: { [key: string]: string };
   session: Session | null;
 }) => {
   const [error, setError] = useState("");
   const [isLoading, setLoading] = useState(false);
+  const [isResponding, setResponding] = useState(false);
   const [isRenderedOnClient, setRenderedOnClient] = useState(false);
 
   // Hack to make sure onLoadedMetadata fires, which fixes the audio duration
@@ -80,6 +84,16 @@ const Audio = ({
           {isRenderedOnClient ? <source src={urls.webm} /> : null}
           {isRenderedOnClient ? <source src={urls.mp3} /> : null}
         </audio>
+        {session?.emailHash ? (
+          <button
+            type="button"
+            onClick={() => setResponding(true)}
+            className={`${styles.respond} default`}
+            disabled={isLoading}
+          >
+            Respond
+          </button>
+        ) : null}
         {session?.isAdmin || session?.emailHash === emailHash ? (
           <button
             type="button"
@@ -93,6 +107,18 @@ const Audio = ({
       </div>
       {error ? (
         <strong className={`error ${styles.error}`}>{error}</strong>
+      ) : null}
+      {isResponding ? (
+        <Recorder session={session} authorMap={authorMap} parent={basename} />
+      ) : null}
+      {children.length ? (
+        <ul className={styles.children}>
+          {children.map((child) => (
+            <li key={child.basename}>
+              <Audio audio={child} session={session} authorMap={authorMap} />
+            </li>
+          ))}
+        </ul>
       ) : null}
     </div>
   );

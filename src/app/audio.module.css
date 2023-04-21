@@ -37,6 +37,15 @@
   margin-right: 0.5rem;
 }
 
+.respond {
+  margin-right: 0.5rem;
+}
+
+.children {
+  margin: 0 auto;
+  width: 90%;
+}
+
 .error {
   text-align: center;
 }

@@ -1,9 +1,7 @@
 "use client";
 
 import { Session } from "next-auth";
-import { signIn, signOut } from "next-auth/react";
 import { useEffect, useState } from "react";
-import { Audio } from "../../types/audioblog";
 import RecorderForm from "./recorder-form";
 import styles from "./recorder.module.css";
 
@@ -22,10 +20,12 @@ const mediaRecorderState: MediaRecorderState = {
 };
 
 const Recorder = ({
-  audios,
+  authorMap,
+  parent,
   session,
 }: {
-  audios: Audio[];
+  authorMap: { [key: string]: string };
+  parent?: string;
   session: Session | null;
 }) => {
   const [error, setError] = useState("");
@@ -153,13 +153,7 @@ const Recorder = ({
       setError("Your are not logged in, try refreshing the page.");
       return;
     }
-    const audiosByThisAuthor = audios.filter(
-      (audio) => audio.author === author
-    );
-    const authorByThisAuthorButDifferentEmail = audiosByThisAuthor.filter(
-      (audio) => audio.emailHash !== session.emailHash
-    );
-    if (authorByThisAuthorButDifferentEmail.length > 0) {
+    if (authorMap[author] && authorMap[author] !== session.emailHash) {
       setError("Someone has already claimed this author name.");
       return;
     }
@@ -169,6 +163,9 @@ const Recorder = ({
       formData.append("title", title);
       formData.append("author", author);
       formData.append("content", audio);
+      if (parent) {
+        formData.append("parent", parent);
+      }
       const response = await fetch("/api/media", {
         method: "POST",
         body: formData,
@@ -193,50 +190,44 @@ const Recorder = ({
 
   return (
     <div className={styles.recorder}>
-      {!session ? (
-        <button type="button" onClick={() => signIn()} className="default">
-          Log in
+      <div className={styles.controls}>
+        <button
+          type="button"
+          onClick={() => toggleRecording()}
+          className={isRecording ? "danger" : "success"}
+        >
+          {isRecording ? "Stop recording" : "Start recording"}
         </button>
-      ) : (
-        <>
+        {audio ? (
           <button
             type="button"
-            onClick={() => signOut()}
-            className={`${styles["log-out"]} danger`}
+            onClick={() => setAudio(null)}
+            className="danger"
           >
-            Log out
+            Discard
           </button>
-          <button
-            type="button"
-            onClick={() => toggleRecording()}
-            className={isRecording ? "danger" : "success"}
-          >
-            {isRecording ? "Stop recording" : "Start recording"}
-          </button>
-          {isRecording ? (
-            <div className={styles.volume}>
-              <div
-                className={styles.volume__marker}
-                style={{ width: volume }}
-              ></div>
-            </div>
-          ) : null}
-          {audio && !isRecording ? (
-            <audio controls src={URL.createObjectURL(audio)} />
-          ) : null}
-          {audio ? (
-            <RecorderForm
-              onSubmit={(author, title) => submitRecording(author, title)}
-              isLoading={isLoading}
-              initialTitle={initialTitle}
-            />
-          ) : null}
-          {success ? (
-            <strong className={styles.success}>{success}</strong>
-          ) : null}
-          {error ? <strong className="error">{error}</strong> : null}
-        </>
-      )}
+        ) : null}
+      </div>
+      {isRecording ? (
+        <div className={styles.volume}>
+          <div
+            className={styles.volume__marker}
+            style={{ width: volume }}
+          ></div>
+        </div>
+      ) : null}
+      {audio && !isRecording ? (
+        <audio controls src={URL.createObjectURL(audio)} />
+      ) : null}
+      {audio ? (
+        <RecorderForm
+          onSubmit={(author, title) => submitRecording(author, title)}
+          isLoading={isLoading}
+          initialTitle={initialTitle}
+        />
+      ) : null}
+      {success ? <strong className={styles.success}>{success}</strong> : null}
+      {error ? <strong className="error">{error}</strong> : null}
     </div>
   );
 };

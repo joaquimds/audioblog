@@ -20,7 +20,6 @@ const MEDIA_DIRECTORY = getMediaDirectory();
 
 export const list = async (): Promise<Audio[]> => {
   const files = await readDir(MEDIA_DIRECTORY);
-  files.sort();
   const metadataFilenames = files.filter(
     (file) => !file.startsWith(".") && file.endsWith("json")
   );
@@ -34,12 +33,14 @@ export const list = async (): Promise<Audio[]> => {
       path.join(MEDIA_DIRECTORY, metadataFilename)
     );
     const mp3Filename = `${basename}.mp3`;
-    const { author, title, emailHash, date } = JSON.parse(metadataString);
+    const { author, parent, title, emailHash, date } =
+      JSON.parse(metadataString);
     audios.push({
-      basename,
       author,
-      emailHash,
+      basename,
       date,
+      emailHash,
+      parent,
       title,
       urls: {
         mp3: `/media/${mp3Filename}`,
@@ -51,13 +52,20 @@ export const list = async (): Promise<Audio[]> => {
 };
 
 export const add = async (
+  audio: Blob,
   author: string,
-  title: string,
   emailHash: string,
-  audio: Blob
+  parent: string | null,
+  title: string
 ) => {
   const now = new Date();
-  const metadata = { author, title, emailHash, date: now.toISOString() };
+  const metadata = {
+    author,
+    date: now.toISOString(),
+    emailHash,
+    parent,
+    title,
+  };
   const basename = String(now.getTime());
   const webmFilename = `${basename}.webm`;
   const metadataFilename = `${basename}.json`;
@@ -73,7 +81,7 @@ export const add = async (
 const createMP3 = (basename: string) => {
   const inputPath = path.join(MEDIA_DIRECTORY, basename) + ".webm";
   const outputPath = path.join(MEDIA_DIRECTORY, basename) + ".mp3";
-  const command = `ffmpeg -i "${inputPath}" -vn -ab 128k -ar 44100 -y "${outputPath}";`;
+  const command = `ffmpeg -i "${inputPath}" -vn -ab 128k -ar 44100 -y "${outputPath}"`;
   return exec(command);
 };
 
