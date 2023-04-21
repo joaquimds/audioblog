@@ -23,6 +23,8 @@ export const list = async (): Promise<Audio[]> => {
   const metadataFilenames = files.filter(
     (file) => !file.startsWith(".") && file.endsWith("json")
   );
+  metadataFilenames.sort()
+  metadataFilenames.reverse()
   const audios = [];
   for (const metadataFilename of metadataFilenames) {
     const filenameParts = metadataFilename.split(".");

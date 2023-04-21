@@ -38,7 +38,7 @@ const Audio = ({
         setError(`Failed to delete recording, error ${response.status}.`);
       } else {
         setError("Deleted recording, reloading...");
-        setTimeout(() => location.reload(), 3000);
+        setTimeout(() => location.reload(), 2000);
       }
     } catch (e: unknown) {
       if (e instanceof Error) {

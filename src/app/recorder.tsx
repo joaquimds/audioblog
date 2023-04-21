@@ -176,7 +176,7 @@ const Recorder = ({
         setSuccess(`Submitted recording with title ${title}! Reloading...`);
         setInitialTitle("");
         setAudio(null);
-        setTimeout(() => location.reload(), 3000);
+        setTimeout(() => location.reload(), 2000);
       }
     } catch (e: unknown) {
       if (e instanceof Error) {
