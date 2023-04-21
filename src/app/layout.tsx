@@ -1,4 +1,7 @@
+import Link from "next/link";
 import "./globals.css";
+
+import styles from "./layout.module.css";
 
 export const metadata = {
   title: "Audioblog",
@@ -23,7 +26,13 @@ export const metadata = {
 const RootLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body className={styles.body}>
+        <div className={styles.children}>{children}</div>
+        <footer className={styles.footer}>
+          <Link href="/terms">Terms and Conditions</Link>
+          <Link href="/privacy">Privacy Policy</Link>
+        </footer>
+      </body>
     </html>
   );
 };

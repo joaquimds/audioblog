@@ -1,4 +1,4 @@
-const TermsAndConditions = () => {
+const Terms = () => {
   return (
     <main className="main copy">
       <h1>Terms and Conditions</h1>
@@ -96,4 +96,4 @@ const TermsAndConditions = () => {
   );
 };
 
-export default TermsAndConditions;
+export default Terms;

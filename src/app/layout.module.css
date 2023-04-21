@@ -1,0 +1,19 @@
+.body {
+  display: flex;
+  flex-direction: column;
+}
+
+.children {
+  flex-grow: 1;
+}
+
+.footer {
+  align-items: center;
+  background-color: #eee;
+  display: flex;
+  justify-content: center;
+}
+
+.footer > * {
+  padding: 0.5rem;
+}

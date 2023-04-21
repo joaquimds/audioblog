@@ -3,6 +3,11 @@ head {
   font-family: sans-serif;
 }
 
+html,
+body {
+  min-height: 100vh;
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -70,8 +75,11 @@ label {
 
 .main {
   margin: 0 auto;
-  max-width: 600px;
   padding: 1rem;
+}
+
+.main.copy {
+  max-width: 600px;
 }
 
 .copy h1 {

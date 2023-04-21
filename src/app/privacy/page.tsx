@@ -1,17 +1,17 @@
-const TermsAndConditions = () => {
+const Privacy = () => {
   return (
     <main className="main copy">
       <h1>Privacy Policy</h1>
       <p>
-        This privacy policy sets out how [Your Website] uses and protects any
-        information that you give [Your Website] when you use this website.
-        [Your Website] is committed to ensuring that your privacy is protected.
+        This privacy policy sets out how Audioblogs uses and protects any
+        information that you give Audioblogs when you use this website.
+        Audioblogs is committed to ensuring that your privacy is protected.
         Should we ask you to provide certain information by which you can be
         identified when using this website, then you can be assured that it will
         only be used in accordance with this privacy statement.
       </p>
       <p>
-        [Your Website] may change this policy from time to time by updating this
+        Audioblogs may change this policy from time to time by updating this
         page. You should check this page from time to time to ensure that you
         are happy with any changes. This policy is effective from [Date].
       </p>
@@ -50,4 +50,4 @@ const TermsAndConditions = () => {
   );
 };
 
-export default TermsAndConditions;
+export default Privacy;
