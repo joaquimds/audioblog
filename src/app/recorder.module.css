@@ -5,7 +5,7 @@
 }
 
 .recorder > * {
-  margin-bottom: 0.5rem;
+  margin-bottom: 1rem;
 }
 
 .recorder > *:last-child {
@@ -35,8 +35,4 @@
 
 .volume__marker {
   background-color: rgb(78, 134, 67);
-}
-
-.success {
-  margin-top: 0.5rem;
 }

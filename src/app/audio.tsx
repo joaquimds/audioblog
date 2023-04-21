@@ -2,12 +2,20 @@
 
 import { Session } from "next-auth";
 import { SyntheticEvent, useEffect, useState } from "react";
-import { AudioTreeItem } from "../../types/audioblog";
+import { Audio, AudioTreeItem } from "../../types/audioblog";
 import styles from "./audio.module.css";
 import Recorder from "./recorder";
 
 const Audio = ({
-  audio: { basename, children, title, author, date, emailHash, urls },
+  audio: {
+    basename,
+    children: initialChildren,
+    title,
+    author,
+    date,
+    emailHash,
+    urls,
+  },
   authorMap,
   session,
 }: {
@@ -19,6 +27,7 @@ const Audio = ({
   const [isLoading, setLoading] = useState(false);
   const [isResponding, setResponding] = useState(false);
   const [isRenderedOnClient, setRenderedOnClient] = useState(false);
+  const [children, setChildren] = useState(initialChildren);
 
   // Hack to make sure onLoadedMetadata fires, which fixes the audio duration
   useEffect(() => {
@@ -61,6 +70,11 @@ const Audio = ({
       audio.addEventListener("timeupdate", backToStart);
       audio.currentTime = 1e101;
     }
+  };
+
+  const onRecorderSuccess = (audio: Audio) => {
+    const item = { ...audio, children: [] };
+    setChildren([item, ...children]);
   };
 
   // Formatted date on server is inconsistent and cba to fix it
@@ -109,7 +123,12 @@ const Audio = ({
         <strong className={`error ${styles.error}`}>{error}</strong>
       ) : null}
       {isResponding ? (
-        <Recorder session={session} authorMap={authorMap} parent={basename} />
+        <Recorder
+          session={session}
+          authorMap={authorMap}
+          parent={basename}
+          onSuccess={onRecorderSuccess}
+        />
       ) : null}
       {children.length ? (
         <ul className={styles.children}>

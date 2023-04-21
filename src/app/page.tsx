@@ -2,10 +2,9 @@ import { list } from "@/media";
 import { getServerSession } from "next-auth/next";
 import { Audio, AudioTreeItem } from "../../types/audioblog";
 import { authOptions } from "./api/auth/[...nextauth]/route";
-import AudioComponent from "./audio";
+import AudioList from "./audio-list";
 import Auth from "./auth";
 import styles from "./page.module.css";
-import Recorder from "./recorder";
 
 const getAudioTree = (audios: Audio[]): AudioTreeItem[] => {
   for (const audio of audios) {
@@ -38,25 +37,11 @@ const Home = async () => {
       <div className={styles.auth}>
         <Auth session={session} />
       </div>
-      <div className={styles.recorder}>
-        <Recorder authorMap={authorMap} session={session} />
-      </div>
-      {audios.length ? (
-        <>
-          <h2 className={styles.title}>All blogs</h2>
-          <ul className={styles.audios}>
-            {audioTree.map((audio) => (
-              <li key={audio.basename} className={styles.audio}>
-                <AudioComponent
-                  audio={audio}
-                  session={session}
-                  authorMap={authorMap}
-                />
-              </li>
-            ))}
-          </ul>
-        </>
-      ) : null}
+      <AudioList
+        session={session}
+        initialAudioTree={audioTree}
+        authorMap={authorMap}
+      />
     </main>
   );
 };

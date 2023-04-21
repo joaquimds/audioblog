@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, useState } from "react";
 import styles from "./recorder-form.module.css";
 
 const RecorderForm = ({
@@ -12,12 +12,8 @@ const RecorderForm = ({
   onSubmit: (author: string, title: string) => Promise<void>;
   initialTitle: string;
 }) => {
-  const [title, setTitle] = useState("");
+  const [title, setTitle] = useState(initialTitle);
   const [author, setAuthor] = useState("");
-
-  useEffect(() => {
-    setTitle(initialTitle);
-  }, [initialTitle, setTitle]);
 
   const onSubmitForm = (e: FormEvent) => {
     e.preventDefault();

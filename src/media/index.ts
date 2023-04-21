@@ -23,8 +23,8 @@ export const list = async (): Promise<Audio[]> => {
   const metadataFilenames = files.filter(
     (file) => !file.startsWith(".") && file.endsWith("json")
   );
-  metadataFilenames.sort()
-  metadataFilenames.reverse()
+  metadataFilenames.sort();
+  metadataFilenames.reverse();
   const audios = [];
   for (const metadataFilename of metadataFilenames) {
     const filenameParts = metadataFilename.split(".");
@@ -59,7 +59,7 @@ export const add = async (
   emailHash: string,
   parent: string | null,
   title: string
-) => {
+): Promise<Audio> => {
   const now = new Date();
   const metadata = {
     author,
@@ -77,14 +77,27 @@ export const add = async (
     path.join(MEDIA_DIRECTORY, metadataFilename),
     JSON.stringify(metadata)
   );
-  await createMP3(basename);
+  const mp3Filename = await createMP3(basename);
+  return {
+    author,
+    basename,
+    date: metadata.date,
+    emailHash,
+    parent,
+    title,
+    urls: {
+      mp3: `/media/${mp3Filename}`,
+      webm: `/media/${webmFilename}`,
+    },
+  };
 };
 
-const createMP3 = (basename: string) => {
+const createMP3 = async (basename: string) => {
   const inputPath = path.join(MEDIA_DIRECTORY, basename) + ".webm";
   const outputPath = path.join(MEDIA_DIRECTORY, basename) + ".mp3";
   const command = `ffmpeg -i "${inputPath}" -vn -ab 128k -ar 44100 -y "${outputPath}"`;
-  return exec(command);
+  await exec(command);
+  return `${basename}.mp3`;
 };
 
 export const remove = async (basename: string, emailHash: string) => {

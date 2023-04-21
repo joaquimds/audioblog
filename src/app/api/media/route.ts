@@ -16,6 +16,6 @@ export const POST = async (request: NextRequest) => {
   if (!title || !content || !author) {
     return new NextResponse("Invalid request", { status: 400 });
   }
-  await add(content, author, session.emailHash, parent, title);
-  return new NextResponse("OK");
+  const audio = await add(content, author, session.emailHash, parent, title);
+  return NextResponse.json(audio);
 };

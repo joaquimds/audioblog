@@ -2,6 +2,7 @@
 
 import { Session } from "next-auth";
 import { useEffect, useState } from "react";
+import { Audio } from "../../types/audioblog";
 import RecorderForm from "./recorder-form";
 import styles from "./recorder.module.css";
 
@@ -23,17 +24,18 @@ const Recorder = ({
   authorMap,
   parent,
   session,
+  onSuccess,
 }: {
   authorMap: { [key: string]: string };
   parent?: string;
   session: Session | null;
+  onSuccess: (audio: Audio) => void;
 }) => {
   const [error, setError] = useState("");
   const [isRecording, setRecording] = useState(false);
   const [audio, setAudio] = useState<Blob | null>(null);
   const [initialTitle, setInitialTitle] = useState("");
   const [isLoading, setLoading] = useState(false);
-  const [success, setSuccess] = useState("");
   const [volume, setVolume] = useState(0);
 
   useEffect(() => {
@@ -43,7 +45,6 @@ const Recorder = ({
   }, [setError]);
 
   const toggleRecording = async () => {
-    setSuccess("");
     setError("");
     if (isRecording) {
       await stopRecording();
@@ -143,7 +144,6 @@ const Recorder = ({
     });
 
   const submitRecording = async (author: string, title: string) => {
-    setSuccess("");
     setError("");
     if (!audio) {
       setError("No recording to submit.");
@@ -173,10 +173,10 @@ const Recorder = ({
       if (!response.ok) {
         setError(`Failed to submit recording, error ${response.status}.`);
       } else {
-        setSuccess(`Submitted recording with title ${title}! Reloading...`);
+        const audio = (await response.json()) as Audio;
         setInitialTitle("");
         setAudio(null);
-        setTimeout(() => location.reload(), 2000);
+        onSuccess(audio);
       }
     } catch (e: unknown) {
       if (e instanceof Error) {
@@ -226,7 +226,6 @@ const Recorder = ({
           initialTitle={initialTitle}
         />
       ) : null}
-      {success ? <strong className={styles.success}>{success}</strong> : null}
       {error ? <strong className="error">{error}</strong> : null}
     </div>
   );

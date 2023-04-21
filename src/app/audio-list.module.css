@@ -1,14 +1,22 @@
-.main {
+.audio-list {
   align-items: center;
   display: flex;
   flex-direction: column;
   max-width: 400px;
 }
 
-.main > * {
+.audio-list > * {
   margin-bottom: 1rem;
 }
 
-.main > *:last-child {
+.audio-list > *:last-child {
   margin-bottom: 0;
+}
+
+.audios {
+  width: 100%;
+}
+
+.audio {
+  margin-bottom: 1rem;
 }
