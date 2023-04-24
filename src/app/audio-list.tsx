@@ -40,6 +40,7 @@ const AudioList = ({
               <li key={audio.basename} className={styles.audio}>
                 <AudioComponent
                   audio={audio}
+                  depth={0}
                   session={session}
                   authorMap={authorMap}
                 />

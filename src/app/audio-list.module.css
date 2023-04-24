@@ -2,7 +2,6 @@
   align-items: center;
   display: flex;
   flex-direction: column;
-  max-width: 400px;
 }
 
 .audio-list > * {
@@ -18,5 +17,9 @@
 }
 
 .audio {
-  margin-bottom: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.audio:last-child {
+  margin-bottom: 0;
 }

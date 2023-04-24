@@ -74,12 +74,10 @@ label {
 }
 
 .main {
+  box-sizing: border-box;
   margin: 0 auto;
-  padding: 1rem;
-}
-
-.main.copy {
   max-width: 600px;
+  padding: 1rem;
 }
 
 .copy h1 {

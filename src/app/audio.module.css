@@ -7,10 +7,6 @@
   margin-bottom: 0.5rem;
 }
 
-.audio > *:last-child {
-  margin-bottom: 0;
-}
-
 .header {
   align-items: baseline;
   display: flex;
@@ -28,15 +24,26 @@
 }
 
 .controls {
-  display: flex;
   align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0 -0.25rem;
 }
 
 .controls audio {
-  flex: 1 1 0;
-  margin-right: 0.5rem;
-  min-width: 0;
-  width: 0;
+  flex-grow: 1;
+  margin-bottom: 0.5rem;
+  margin-right: 0.25rem;
+}
+
+.buttons {
+  display: flex;
+  margin: 0 auto 0.5rem;
+  padding: 0 0.25rem;
+}
+
+.buttons button {
+  width: 90px;
 }
 
 .respond {
@@ -44,8 +51,10 @@
 }
 
 .children {
-  margin: 0 auto;
-  width: 90%;
+  border-radius: 0.25rem;
+  box-sizing: border-box;
+  padding: 0.5rem 1rem 0;
+  width: 100%;
 }
 
 .error {

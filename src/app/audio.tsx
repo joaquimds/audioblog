@@ -17,10 +17,12 @@ const Audio = ({
     urls,
   },
   authorMap,
+  depth,
   session,
 }: {
   audio: AudioTreeItem;
   authorMap: { [key: string]: string };
+  depth: number,
   session: Session | null;
 }) => {
   const [error, setError] = useState("");
@@ -74,6 +76,7 @@ const Audio = ({
 
   const onRecorderSuccess = (audio: Audio) => {
     const item = { ...audio, children: [] };
+    setResponding(false)
     setChildren([item, ...children]);
   };
 
@@ -85,6 +88,12 @@ const Audio = ({
     ${new Date(date).toLocaleDateString()}
     ${new Date(date).toLocaleTimeString()}
   `.trim();
+
+  const backgroundDepth = depth === 0 ? 1 : depth + 3; // Skip depth = 2,3 because they looks bad
+  const childBackgroundValue = 255 - (backgroundDepth) * 5;
+  const childBackground = (
+    `rgb(${childBackgroundValue},${childBackgroundValue},${childBackgroundValue})`
+  )
 
   return (
     <div className={styles.audio}>
@@ -98,26 +107,28 @@ const Audio = ({
           {isRenderedOnClient ? <source src={urls.webm} /> : null}
           {isRenderedOnClient ? <source src={urls.mp3} /> : null}
         </audio>
-        {session?.emailHash ? (
-          <button
-            type="button"
-            onClick={() => setResponding(true)}
-            className={`${styles.respond} default`}
-            disabled={isLoading}
-          >
-            Respond
-          </button>
-        ) : null}
-        {session?.isAdmin || session?.emailHash === emailHash ? (
-          <button
-            type="button"
-            onClick={() => deleteAudio()}
-            className="danger"
-            disabled={isLoading}
-          >
-            Delete
-          </button>
-        ) : null}
+        <div className={styles.buttons}>
+          {session?.emailHash ? (
+            <button
+              type="button"
+              onClick={() => setResponding(!isResponding)}
+              className={`${styles.respond} default`}
+              disabled={isLoading}
+            >
+              {isResponding ? "Cancel": "Respond"}
+            </button>
+          ) : null}
+          {session?.isAdmin || session?.emailHash === emailHash ? (
+            <button
+              type="button"
+              onClick={() => deleteAudio()}
+              className="danger"
+              disabled={isLoading}
+            >
+              Delete
+            </button>
+          ) : null}
+        </div>
       </div>
       {error ? (
         <strong className={`error ${styles.error}`}>{error}</strong>
@@ -131,10 +142,10 @@ const Audio = ({
         />
       ) : null}
       {children.length ? (
-        <ul className={styles.children}>
+        <ul className={styles.children} style={{ backgroundColor: childBackground }}>
           {children.map((child) => (
             <li key={child.basename}>
-              <Audio audio={child} session={session} authorMap={authorMap} />
+              <Audio audio={child} session={session} authorMap={authorMap} depth={depth + 1} />
             </li>
           ))}
         </ul>
