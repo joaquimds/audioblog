@@ -33,8 +33,10 @@
 }
 
 .controls audio {
-  flex-grow: 1;
+  flex: 1 1 0;
   margin-right: 0.5rem;
+  min-width: 0;
+  width: 0;
 }
 
 .respond {
