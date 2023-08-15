@@ -33,7 +33,7 @@ const Home = async () => {
   }, {});
   return (
     <main className={`${styles.main} main`}>
-      <h1 className={styles.title}>Audioblog</h1>
+      <h1 className={styles.title}>Spoken Words</h1>
       <div className={styles.auth}>
         <Auth session={session} />
       </div>
