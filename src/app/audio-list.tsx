@@ -34,7 +34,7 @@ const AudioList = ({
       </div>
       {audioTree.length ? (
         <>
-          <h2 className={styles.title}>All blogs</h2>
+          <h2 className={styles.title}>All recordings</h2>
           <ul className={styles.audios}>
             {audioTree.map((audio) => (
               <li key={audio.basename} className={styles.audio}>

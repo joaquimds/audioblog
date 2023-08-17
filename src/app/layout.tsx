@@ -4,13 +4,13 @@ import "./globals.css";
 import styles from "./layout.module.css";
 
 export const metadata = {
-  title: "Spoken Words",
+  title: "Audio Recordings",
   description: "Recordings",
   openGraph: {
-    title: "Spoken Words",
+    title: "Audio Recordings",
     description: "Listen and answer.",
     url: "https://audio.joaqu.im",
-    siteName: "Spoken Words",
+    siteName: "Audio Recordings",
     images: [
       {
         url: "https://audio.joaqu.im/logo.png",

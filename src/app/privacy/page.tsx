@@ -3,15 +3,15 @@ const Privacy = () => {
     <main className="main copy">
       <h1>Privacy Policy</h1>
       <p>
-        This privacy policy sets out how Spoken Words uses and protects any
-        information that you give Spoken Words when you use this website.
-        Spoken Words is committed to ensuring that your privacy is protected.
+        This privacy policy sets out how Audio Recordings uses and protects any
+        information that you give Audio Recordings when you use this website.
+        Audio Recordings is committed to ensuring that your privacy is protected.
         Should we ask you to provide certain information by which you can be
         identified when using this website, then you can be assured that it will
         only be used in accordance with this privacy statement.
       </p>
       <p>
-        Spoken Words may change this policy from time to time by updating this
+        Audio Recordings may change this policy from time to time by updating this
         page. You should check this page from time to time to ensure that you
         are happy with any changes. This policy is effective from [Date].
       </p>
